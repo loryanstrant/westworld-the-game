@@ -133,10 +133,13 @@
     if(game.ability>=100&&!game.abilityReadyAnnounced){game.abilityReadyAnnounced=true;showMessage(`${game.char.ability} READY · PRESS E OR THE E BUTTON`,1800);chord([220,330,440])}
     tone(90+Math.random()*20,.025,"square",.012);
     checkTile();
-    if(game.steps%2===0)moveEnemies();
+    if(state==="playing"&&game.steps%2===0)moveEnemies();
   }
   function checkTile() {
     const p=game.player;
+    const enemy=game.enemies.find(e=>e.x===p.x&&e.y===p.y);
+    if(enemy)encounter(enemy);
+    if(state!=="playing")return;
     const mem=game.memories.find(m=>!m.found&&m.x===p.x&&m.y===p.y);
     if(mem){mem.found=true;game.found++;game.consciousness+=10;game.score+=250;chord([262,330,392]);showMessage(NARRATIVE[game.char.name][game.layer],2200)}
     if(p.x===game.exit.x&&p.y===game.exit.y){
@@ -158,7 +161,7 @@
   }
   function encounter(enemy){
     if(game.shield){game.shield--;enemy.stunned=5;showMessage(game.shield?"YOU ENDURE · ONE REFUSAL REMAINS":"YOU CHOOSE A DIFFERENT ENDING",1100);chord([180,240,360]);return}
-    game.stability-=20;enemy.stunned=4;game.player={x:1,y:1};tone(55,.35,"sawtooth",.05);showMessage("THE LOOP PULLS YOU BACK · STABILITY −20",1300);
+    game.stability-=15;enemy.stunned=4;tone(55,.35,"sawtooth",.05);showMessage("YOU PUSH PAST THE HOST · STABILITY −15",1300);
     if(game.stability<=0)state="lost";
   }
   function awaken(){
