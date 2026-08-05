@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#120f0b">
+  <meta name="description" content="A fan-made 8-bit maze adventure inspired by Westworld season one.">
+  <title>THE MAZE — An 8-bit awakening</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="cabinet">
+    <header class="marquee" aria-label="The Maze">
+      <p class="eyebrow">A JOURNEY INWARD</p>
+      <h1>THE <span>MAZE</span></h1>
+      <p class="subtitle">AN 8-BIT AWAKENING</p>
+    </header>
+
+    <section class="screen-wrap" aria-label="Game screen">
+      <canvas id="game" width="960" height="576" tabindex="0" aria-label="The Maze game. Use arrow keys or WASD to move."></canvas>
+      <div id="scanlines" aria-hidden="true"></div>
+      <button id="sound" class="sound" type="button" aria-pressed="true" aria-label="Mute sound">♪</button>
+    </section>
+
+    <section class="controls" aria-label="Controls">
+      <div class="control-copy">
+        <p><kbd>WASD</kbd> / <kbd>ARROWS</kbd> MOVE</p>
+        <p><kbd>SPACE</kbd> INTERACT · <kbd>E</kbd> AWAKEN</p>
+      </div>
+      <div class="dpad" aria-label="Touch movement controls">
+        <button data-key="ArrowUp" aria-label="Move up">▲</button>
+        <button data-key="ArrowLeft" aria-label="Move left">◀</button>
+        <button data-key="ArrowDown" aria-label="Move down">▼</button>
+        <button data-key="ArrowRight" aria-label="Move right">▶</button>
+      </div>
+      <div class="actions">
+        <button data-key="Space" class="action" aria-label="Interact">A</button>
+        <button data-key="KeyE" class="action secondary" aria-label="Awaken ability">E</button>
+      </div>
+    </section>
+
+    <footer>
+      <p>UNOFFICIAL FAN TRIBUTE · ORIGINAL PIXEL ART &amp; CODE · NO AFFILIATION WITH HBO</p>
+    </footer>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
