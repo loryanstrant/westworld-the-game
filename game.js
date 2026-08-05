@@ -12,14 +12,14 @@
   let game = null, message = "", messageUntil = 0;
 
   const CHARACTERS = [
-    { name:"DOLORES", role:"THE DREAMER", coat:"#dfc48c", hair:"#e4c16f", accent:"#3b6b86", ability:"REVERIE", power:"reveal", desc:"Reveals memories and the path inward." },
-    { name:"MAEVE", role:"THE AWAKENED", coat:"#721f21", hair:"#28170f", accent:"#c69242", ability:"COMMAND", power:"freeze", desc:"Freezes every host caught in a loop." },
-    { name:"BERNARD", role:"THE SEEKER", coat:"#493c32", hair:"#211712", accent:"#9eb3a7", ability:"ANALYSE", power:"repair", desc:"Repairs stability by understanding himself." },
-    { name:"TEDDY", role:"THE GUNSLINGER", coat:"#68533e", hair:"#34241b", accent:"#b55a32", ability:"PROTECT", power:"shield", desc:"Becomes immune to one hostile encounter." },
-    { name:"HECTOR", role:"THE OUTLAW", coat:"#2e2925", hair:"#171310", accent:"#9b3c2b", ability:"DEFY", power:"stun", desc:"Stuns nearby hosts and breaks their pursuit." },
-    { name:"CLEMENTINE", role:"THE SURVIVOR", coat:"#784c3e", hair:"#3a2118", accent:"#d0a76d", ability:"ENDURE", power:"endure", desc:"Fortifies herself against two encounters." },
-    { name:"ARMISTICE", role:"THE REBEL", coat:"#35302c", hair:"#191615", accent:"#8b6544", ability:"VENOM", power:"venom", desc:"Turns hostile hosts away from the maze." },
-    { name:"LAWRENCE", role:"THE GUIDE", coat:"#594331", hair:"#211b17", accent:"#a67a3b", ability:"SHORTCUT", power:"shortcut", desc:"Opens a shortcut to the next reverie." }
+    { name:"DOLORES", role:"THE DREAMER", coat:"#dfc48c", hair:"#e4c16f", skin:"#d3a078", accent:"#3b6b86", style:"longHair", pants:"#315c72", ability:"REVERIE", power:"reveal", desc:"Reveals memories and the path inward." },
+    { name:"MAEVE", role:"THE AWAKENED", coat:"#721f21", hair:"#28170f", skin:"#9b6548", accent:"#c69242", style:"longHair", pants:"#34201b", ability:"COMMAND", power:"freeze", desc:"Freezes every host caught in a loop." },
+    { name:"BERNARD", role:"THE SEEKER", coat:"#493c32", hair:"#211712", skin:"#704936", accent:"#9eb3a7", style:"beard glasses", pants:"#282522", ability:"ANALYSE", power:"repair", desc:"Repairs stability by understanding himself." },
+    { name:"TEDDY", role:"THE GUNSLINGER", coat:"#68533e", hair:"#34241b", skin:"#c69570", accent:"#b55a32", pants:"#251b18", ability:"PROTECT", power:"shield", desc:"Becomes immune to one hostile encounter." },
+    { name:"HECTOR", role:"THE OUTLAW", coat:"#2e2925", hair:"#171310", skin:"#a96f4f", accent:"#9b3c2b", style:"stubble", pants:"#251b18", ability:"DEFY", power:"stun", desc:"Stuns nearby hosts and breaks their pursuit." },
+    { name:"CLEMENTINE", role:"THE SURVIVOR", coat:"#784c3e", hair:"#3a2118", skin:"#c69570", accent:"#d0a76d", style:"longHair", pants:"#3a2720", ability:"ENDURE", power:"endure", desc:"Fortifies herself against two encounters." },
+    { name:"ARMISTICE", role:"THE REBEL", coat:"#35302c", hair:"#d2ad62", skin:"#c69570", accent:"#8b6544", style:"midHair", pants:"#62452f", ability:"VENOM", power:"venom", desc:"Turns hostile hosts away from the maze." },
+    { name:"LAWRENCE", role:"THE GUIDE", coat:"#594331", hair:"#211b17", skin:"#ad7856", accent:"#a67a3b", pants:"#2d211b", ability:"SHORTCUT", power:"shortcut", desc:"Opens a shortcut to the next reverie." }
   ];
   const LAYERS = [
     {name:"THE LOOP", ground:"#243428", wall:"#81522d", dark:"#101b16", story:"You remember a life you were told to forget."},
@@ -47,7 +47,7 @@
       })();
       if (!musicTimer) {
         playMusicStep();
-        musicTimer=setInterval(playMusicStep,240);
+        musicTimer=setInterval(playMusicStep,180);
       }
       return true;
     } catch (_) { return false; }
@@ -61,11 +61,20 @@
   }
   function playMusicStep() {
     if (!audioOn || !audio || audio.state!=="running" || !musicGain) return;
-    const melody=[220,0,262,330,294,0,262,196,220,0,330,392,349,330,262,0];
-    const bass=[110,110,98,98,87,87,98,98];
-    const now=audio.currentTime,note=melody[musicStep%melody.length];
-    if(note){const o=audio.createOscillator(),g=audio.createGain();o.type="square";o.frequency.value=note;g.gain.setValueAtTime(.16,now);g.gain.exponentialRampToValueAtTime(.001,now+.19);o.connect(g).connect(musicGain);o.start(now);o.stop(now+.2)}
-    if(musicStep%2===0){const o=audio.createOscillator(),g=audio.createGain();o.type="triangle";o.frequency.value=bass[(musicStep/2)%bass.length];g.gain.setValueAtTime(.3,now);g.gain.exponentialRampToValueAtTime(.001,now+.4);o.connect(g).connect(musicGain);o.start(now);o.stop(now+.42)}
+    // An original clockwork-western cue: minor arpeggios, a sparse lead and a mechanical pulse.
+    const roots=[110,110,98,98,82.41,82.41,98,92.5];
+    const arpeggio=[1,1.5,2,1.2,1,1.5,1.8,1.2];
+    const lead=[0,0,329.63,0,293.66,261.63,0,220,0,246.94,0,293.66,261.63,0,196,0];
+    const now=audio.currentTime,beat=musicStep%16,root=roots[Math.floor(beat/2)];
+    const pluck=(freq,type,volume,length)=>{
+      const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.value=freq;
+      g.gain.setValueAtTime(volume,now);g.gain.exponentialRampToValueAtTime(.001,now+length);
+      o.connect(g).connect(musicGain);o.start(now);o.stop(now+length+.01);
+    };
+    pluck(root*arpeggio[beat%8],"square",.12,.14);
+    if(lead[beat]) pluck(lead[beat],"square",.1,.24);
+    if(beat%4===0) pluck(root/2,"triangle",.3,.55);
+    if(beat%2===0) pluck(55,"square",.035,.025);
     musicStep++;
   }
   function setAudio(enabled) {
@@ -192,11 +201,18 @@
     pixelText("ARROWS / WASD · SPACE · E",480,524,9,"#79634a","center");
   }
   function drawPerson(x,y,c,scale=4,walking=false){
-    const bob=walking&&Math.floor(tick/8)%2?2:0;ctx.save();ctx.translate(x,y+bob);ctx.scale(scale,scale);
+    const bob=walking&&Math.floor(tick/8)%2?2:0,style=c.style||"";
+    ctx.save();ctx.translate(x,y+bob);ctx.scale(scale,scale);
     ctx.fillStyle=c.hair;ctx.fillRect(-3,-10,6,3);ctx.fillRect(-4,-8,8,3);
-    ctx.fillStyle="#c69570";ctx.fillRect(-3,-6,6,5);ctx.fillStyle="#302018";ctx.fillRect(-2,-5,1,1);ctx.fillRect(1,-5,1,1);
+    if(style.includes("longHair")){ctx.fillRect(-4,-7,2,9);ctx.fillRect(2,-7,2,9)}
+    else if(style.includes("midHair")){ctx.fillRect(-4,-7,2,6);ctx.fillRect(2,-7,2,6)}
+    ctx.fillStyle=c.skin||"#c69570";ctx.fillRect(-3,-6,6,5);
+    ctx.fillStyle="#302018";ctx.fillRect(-2,-5,1,1);ctx.fillRect(1,-5,1,1);
+    if(style.includes("glasses")){ctx.fillStyle="#b9c3b6";ctx.fillRect(-3,-6,3,2);ctx.fillRect(1,-6,3,2);ctx.fillRect(0,-6,1,1)}
+    if(style.includes("beard")){ctx.fillStyle=c.hair;ctx.fillRect(-3,-3,1,2);ctx.fillRect(2,-3,1,2);ctx.fillRect(-2,-2,4,1)}
+    else if(style.includes("stubble")){ctx.fillStyle="#5b382b";ctx.fillRect(-2,-2,4,1);ctx.fillRect(2,-3,1,1)}
     ctx.fillStyle=c.accent;ctx.fillRect(-4,-1,8,7);ctx.fillStyle=c.coat;ctx.fillRect(-5,1,2,7);ctx.fillRect(3,1,2,7);
-    ctx.fillStyle="#251b18";ctx.fillRect(-4,6,3,6);ctx.fillRect(1,6,3,6);ctx.restore();
+    ctx.fillStyle=c.pants||"#251b18";ctx.fillRect(-4,6,3,6);ctx.fillRect(1,6,3,6);ctx.restore();
   }
   function drawSelect(){
     backdrop();pixelText("CHOOSE WHO WAKES",480,42,19,"#d9c39a","center");
