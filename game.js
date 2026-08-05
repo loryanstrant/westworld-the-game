@@ -13,11 +13,11 @@
 
   const CHARACTERS = [
     { name:"DOLORES", role:"THE DREAMER", coat:"#dfc48c", hair:"#e4c16f", skin:"#d3a078", accent:"#3b6b86", style:"longHair dress", pants:"#315c72", ability:"REVERIE", power:"reveal", desc:"Reveals memories and the path inward." },
-    { name:"MAEVE", role:"THE AWAKENED", coat:"#721f21", hair:"#28170f", skin:"#9b6548", accent:"#c69242", style:"longHair dress", pants:"#34201b", ability:"COMMAND", power:"freeze", desc:"Freezes every host caught in a loop." },
-    { name:"BERNARD", role:"THE SEEKER", coat:"#493c32", hair:"#211712", skin:"#704936", accent:"#9eb3a7", style:"beard glasses", pants:"#282522", ability:"ANALYSE", power:"repair", desc:"Repairs stability by understanding himself." },
+    { name:"MAEVE", role:"THE AWAKENED", coat:"#211817", hair:"#28170f", skin:"#9b6548", accent:"#2b201d", style:"longHair dress", pants:"#171312", ability:"COMMAND", power:"freeze", desc:"Freezes every host caught in a loop." },
+    { name:"BERNARD", role:"THE SEEKER", coat:"#111314", hair:"#211712", skin:"#704936", accent:"#202326", style:"beard glasses suit", pants:"#121415", ability:"ANALYSE", power:"repair", desc:"Repairs stability by understanding himself." },
     { name:"TEDDY", role:"THE GUNSLINGER", coat:"#68533e", hair:"#34241b", skin:"#c69570", accent:"#b55a32", pants:"#251b18", ability:"PROTECT", power:"shield", desc:"Becomes immune to one hostile encounter." },
     { name:"HECTOR", role:"THE OUTLAW", coat:"#2e2925", hair:"#171310", skin:"#a96f4f", accent:"#9b3c2b", style:"stubble", pants:"#251b18", ability:"DEFY", power:"stun", desc:"Stuns nearby hosts and breaks their pursuit." },
-    { name:"CLEMENTINE", role:"THE SURVIVOR", coat:"#784c3e", hair:"#3a2118", skin:"#c69570", accent:"#d0a76d", style:"longHair dress", pants:"#3a2720", ability:"ENDURE", power:"endure", desc:"Fortifies herself against two encounters." },
+    { name:"CLEMENTINE", role:"THE SURVIVOR", coat:"#2b211d", hair:"#3a2118", skin:"#c69570", accent:"#382923", style:"longHair dress", pants:"#1c1715", ability:"ENDURE", power:"endure", desc:"Fortifies herself against two encounters." },
     { name:"ARMISTICE", role:"THE REBEL", coat:"#35302c", hair:"#d2ad62", skin:"#c69570", accent:"#8b6544", style:"midHair", pants:"#62452f", ability:"VENOM", power:"venom", desc:"Turns hostile hosts away from the maze." },
     { name:"LAWRENCE", role:"THE GUIDE", coat:"#594331", hair:"#211b17", skin:"#ad7856", accent:"#a67a3b", pants:"#2d211b", ability:"SHORTCUT", power:"shortcut", desc:"Opens a shortcut to the next reverie." }
   ];
@@ -215,6 +215,11 @@
     if(style.includes("beard")){ctx.fillStyle=c.hair;ctx.fillRect(-3,-3,1,2);ctx.fillRect(2,-3,1,2);ctx.fillRect(-2,-2,4,1)}
     else if(style.includes("stubble")){ctx.fillStyle="#5b382b";ctx.fillRect(-2,-2,4,1);ctx.fillRect(2,-3,1,1)}
     ctx.fillStyle=c.accent;ctx.fillRect(-4,-1,8,7);ctx.fillStyle=c.coat;ctx.fillRect(-5,1,2,7);ctx.fillRect(3,1,2,7);
+    if(style.includes("suit")){
+      ctx.fillStyle="#d8d3c5";ctx.fillRect(-1,-1,2,4);
+      ctx.fillStyle="#322c29";ctx.fillRect(0,0,1,4);
+      ctx.fillStyle=c.coat;ctx.fillRect(-3,0,2,5);ctx.fillRect(1,0,2,5);
+    }
     if(style.includes("dress")){
       ctx.fillStyle=c.accent;ctx.fillRect(-5,5,10,3);ctx.fillRect(-6,8,12,4);
       ctx.fillStyle=c.pants||"#251b18";ctx.fillRect(-4,12,2,1);ctx.fillRect(2,12,2,1);
