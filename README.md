@@ -23,11 +23,11 @@ Then visit <http://localhost:8080>.
 
 ## Goal
 
-Collect the three reveries in each maze layer to unlock the passage inward. Reach the centre before your stability runs out. Each character has a distinct ability and story perspective.
+Collect the three reveries in each maze layer to unlock the passage inward. Reach the centre before your stability runs out. Choose from eight characters, each with a distinct ability and story perspective.
 
 ## Technical notes
 
 - Vanilla HTML, CSS, and JavaScript; no build step or runtime dependencies
 - Canvas renderer with procedural depth-first maze generation
-- Web Audio chiptune effects (audio begins after user interaction)
+- Original procedural Web Audio chiptune score and effects (audio begins after user interaction)
 - Keyboard and touch support

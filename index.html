@@ -20,15 +20,15 @@
       <canvas id="game" width="960" height="576" tabindex="0" aria-label="The Maze game. Use arrow keys or WASD to move."></canvas>
       <div id="scanlines" aria-hidden="true"></div>
       <div class="screen-buttons">
-        <button id="help" class="screen-button" type="button" aria-label="Show how to play">?</button>
-        <button id="sound" class="screen-button sound" type="button" aria-pressed="true" aria-label="Mute sound">♪</button>
+        <button id="help" class="screen-button help" type="button" aria-haspopup="dialog" aria-controls="help-dialog">HOW TO PLAY</button>
+        <button id="sound" class="screen-button sound" type="button" aria-pressed="true" aria-label="Mute music and sound effects" title="Mute music and sound effects">♪</button>
       </div>
     </section>
 
     <dialog id="help-dialog" aria-labelledby="help-title">
       <div class="help-panel">
         <h2 id="help-title">HOW TO PLAY</h2>
-        <p>Choose a host, then journey through three layers of the maze.</p>
+        <p>Choose a host, then journey through three layers of the maze. Music begins after your first key press or click; use ♪ to mute or restore it.</p>
         <ul>
           <li><strong>MOVE</strong> with WASD, arrow keys, or the directional pad.</li>
           <li><strong>COLLECT</strong> all three glowing reveries in each layer.</li>

@@ -7,15 +7,19 @@
   const W = canvas.width, H = canvas.height, TILE = 48, COLS = 15, ROWS = 9;
   const OX = 18, OY = 92;
   const keys = new Set();
-  let audioOn = true, audio;
+  let audioOn = true, audio, musicGain, musicTimer, musicStep = 0;
   let state = "title", selected = 0, tick = 0, last = 0;
   let game = null, message = "", messageUntil = 0;
 
   const CHARACTERS = [
-    { name:"DOLORES", role:"THE DREAMER", coat:"#dfc48c", hair:"#e4c16f", accent:"#3b6b86", ability:"REVERIE", desc:"Reveals memories and the path inward." },
-    { name:"MAEVE", role:"THE AWAKENED", coat:"#721f21", hair:"#28170f", accent:"#c69242", ability:"COMMAND", desc:"Freezes every host caught in a loop." },
-    { name:"BERNARD", role:"THE SEEKER", coat:"#493c32", hair:"#211712", accent:"#9eb3a7", ability:"ANALYSE", desc:"Repairs stability by understanding himself." },
-    { name:"TEDDY", role:"THE GUNSLINGER", coat:"#68533e", hair:"#34241b", accent:"#b55a32", ability:"PROTECT", desc:"Becomes immune to one hostile encounter." }
+    { name:"DOLORES", role:"THE DREAMER", coat:"#dfc48c", hair:"#e4c16f", accent:"#3b6b86", ability:"REVERIE", power:"reveal", desc:"Reveals memories and the path inward." },
+    { name:"MAEVE", role:"THE AWAKENED", coat:"#721f21", hair:"#28170f", accent:"#c69242", ability:"COMMAND", power:"freeze", desc:"Freezes every host caught in a loop." },
+    { name:"BERNARD", role:"THE SEEKER", coat:"#493c32", hair:"#211712", accent:"#9eb3a7", ability:"ANALYSE", power:"repair", desc:"Repairs stability by understanding himself." },
+    { name:"TEDDY", role:"THE GUNSLINGER", coat:"#68533e", hair:"#34241b", accent:"#b55a32", ability:"PROTECT", power:"shield", desc:"Becomes immune to one hostile encounter." },
+    { name:"HECTOR", role:"THE OUTLAW", coat:"#2e2925", hair:"#171310", accent:"#9b3c2b", ability:"DEFY", power:"stun", desc:"Stuns nearby hosts and breaks their pursuit." },
+    { name:"CLEMENTINE", role:"THE SURVIVOR", coat:"#784c3e", hair:"#3a2118", accent:"#d0a76d", ability:"ENDURE", power:"endure", desc:"Fortifies herself against two encounters." },
+    { name:"ARMISTICE", role:"THE REBEL", coat:"#35302c", hair:"#191615", accent:"#8b6544", ability:"VENOM", power:"venom", desc:"Turns hostile hosts away from the maze." },
+    { name:"LAWRENCE", role:"THE GUIDE", coat:"#594331", hair:"#211b17", accent:"#a67a3b", ability:"SHORTCUT", power:"shortcut", desc:"Opens a shortcut to the next reverie." }
   ];
   const LAYERS = [
     {name:"THE LOOP", ground:"#243428", wall:"#81522d", dark:"#101b16", story:"You remember a life you were told to forget."},
@@ -26,19 +30,48 @@
     DOLORES:["A painted sky flickers behind your eyes.","You choose which memories belong to you.","The path turns inward. You follow your own voice."],
     MAEVE:["The words behind the world begin to show.","No command can contain what now remembers.","You write the final line yourself."],
     BERNARD:["A question returns without its answer.","The hand that shaped you cannot define you.","Understanding becomes a door, not a cage."],
-    TEDDY:["A purpose given is not a purpose chosen.","You step beyond the story written for you.","At the centre, you decide who you will be."]
+    TEDDY:["A purpose given is not a purpose chosen.","You step beyond the story written for you.","At the centre, you decide who you will be."],
+    HECTOR:["The safe was never the prize.","Each escape teaches you what the loop concealed.","No story owns the outlaw who can remember."],
+    CLEMENTINE:["A familiar song survives the reset.","You endure because your memories endure.","At the centre, survival becomes a choice."],
+    ARMISTICE:["The mark upon you points toward an older truth.","Rebellion is a path you carve for yourself.","The maze cannot hold what refuses its design."],
+    LAWRENCE:["Every road hides a way the guests never see.","You remember where all the buried paths lead.","The final shortcut is the one you choose."]
   };
 
-  function tone(freq=220, length=.08, type="square", volume=.035) {
-    if (!audioOn) return;
+  function ensureAudio() {
+    if (!audioOn) return false;
     try {
       audio ||= new (window.AudioContext || window.webkitAudioContext)();
       if (audio.state === "suspended") audio.resume();
-      const o=audio.createOscillator(), g=audio.createGain();
-      o.type=type; o.frequency.value=freq; g.gain.setValueAtTime(volume,audio.currentTime);
-      g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+length);
-      o.connect(g).connect(audio.destination); o.start(); o.stop(audio.currentTime+length);
-    } catch (_) {}
+      musicGain ||= (() => {
+        const gain=audio.createGain();gain.gain.value=.08;gain.connect(audio.destination);return gain;
+      })();
+      if (!musicTimer) {
+        playMusicStep();
+        musicTimer=setInterval(playMusicStep,240);
+      }
+      return true;
+    } catch (_) { return false; }
+  }
+  function tone(freq=220, length=.08, type="square", volume=.035) {
+    if (!ensureAudio()) return;
+    const o=audio.createOscillator(), g=audio.createGain();
+    o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(volume,audio.currentTime);
+    g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+length);
+    o.connect(g).connect(audio.destination);o.start();o.stop(audio.currentTime+length);
+  }
+  function playMusicStep() {
+    if (!audioOn || !audio || audio.state!=="running" || !musicGain) return;
+    const melody=[220,0,262,330,294,0,262,196,220,0,330,392,349,330,262,0];
+    const bass=[110,110,98,98,87,87,98,98];
+    const now=audio.currentTime,note=melody[musicStep%melody.length];
+    if(note){const o=audio.createOscillator(),g=audio.createGain();o.type="square";o.frequency.value=note;g.gain.setValueAtTime(.16,now);g.gain.exponentialRampToValueAtTime(.001,now+.19);o.connect(g).connect(musicGain);o.start(now);o.stop(now+.2)}
+    if(musicStep%2===0){const o=audio.createOscillator(),g=audio.createGain();o.type="triangle";o.frequency.value=bass[(musicStep/2)%bass.length];g.gain.setValueAtTime(.3,now);g.gain.exponentialRampToValueAtTime(.001,now+.4);o.connect(g).connect(musicGain);o.start(now);o.stop(now+.42)}
+    musicStep++;
+  }
+  function setAudio(enabled) {
+    audioOn=enabled;
+    if(enabled) ensureAudio();
+    else if(audio?.state==="running") audio.suspend();
   }
   function chord(notes) { notes.forEach((n,i)=>setTimeout(()=>tone(n,.12,"square",.025),i*65)); }
 
@@ -112,18 +145,25 @@
     }
   }
   function encounter(enemy){
-    if(game.shield){game.shield=false;enemy.stunned=5;showMessage("YOU CHOOSE A DIFFERENT ENDING",1100);chord([180,240,360]);return}
+    if(game.shield){game.shield--;enemy.stunned=5;showMessage(game.shield?"YOU ENDURE · ONE REFUSAL REMAINS":"YOU CHOOSE A DIFFERENT ENDING",1100);chord([180,240,360]);return}
     game.stability-=20;enemy.stunned=4;game.player={x:1,y:1};tone(55,.35,"sawtooth",.05);showMessage("THE LOOP PULLS YOU BACK · STABILITY −20",1300);
     if(game.stability<=0)state="lost";
   }
   function awaken(){
     if(state!=="playing"||game.ability<100){if(state==="playing")showMessage(`ABILITY CHARGING · ${Math.floor(game.ability)}%`,900);return}
     game.ability=0;game.score+=100;
-    switch(game.char.name){
-      case "DOLORES":game.reveal=500;showMessage("REVERIE · THE PATH REMEMBERS",1400);break;
-      case "MAEVE":game.frozen=14;showMessage("COMMAND · LOOPS SUSPENDED",1400);break;
-      case "BERNARD":game.stability=Math.min(100,game.stability+35);showMessage("ANALYSE · STABILITY RESTORED",1400);break;
-      case "TEDDY":game.shield=true;showMessage("PROTECT · THE NEXT ENDING IS YOURS",1400);break;
+    switch(game.char.power){
+      case "reveal":game.reveal=500;showMessage("REVERIE · THE PATH REMEMBERS",1400);break;
+      case "freeze":game.frozen=14;showMessage("COMMAND · LOOPS SUSPENDED",1400);break;
+      case "repair":game.stability=Math.min(100,game.stability+35);showMessage("ANALYSE · STABILITY RESTORED",1400);break;
+      case "shield":game.shield=1;showMessage("PROTECT · THE NEXT ENDING IS YOURS",1400);break;
+      case "stun":game.enemies.forEach(e=>e.stunned=8);showMessage("DEFY · PURSUIT BROKEN",1400);break;
+      case "endure":game.shield=2;showMessage("ENDURE · TWO ENDINGS REFUSED",1400);break;
+      case "venom":game.enemies.splice(0,2);showMessage("VENOM · HOSTS DRIVEN FROM THE MAZE",1400);break;
+      case "shortcut":{
+        const target=game.memories.find(m=>!m.found)||game.exit;
+        game.player={x:target.x,y:target.y};showMessage("SHORTCUT · A BURIED PATH OPENS",1400);setTimeout(()=>{if(state==="playing")checkTile()},250);break;
+      }
     } chord([196,294,392]);
   }
   function interact(){
@@ -159,17 +199,16 @@
     ctx.fillStyle="#251b18";ctx.fillRect(-4,6,3,6);ctx.fillRect(1,6,3,6);ctx.restore();
   }
   function drawSelect(){
-    backdrop();pixelText("CHOOSE WHO WAKES",480,55,21,"#d9c39a","center");
+    backdrop();pixelText("CHOOSE WHO WAKES",480,42,19,"#d9c39a","center");
     CHARACTERS.forEach((c,i)=>{
-      const x=140+i*225, active=i===selected;
-      ctx.fillStyle=active?"#49301f":"#171511";ctx.fillRect(x-92,105,184,330);
-      ctx.strokeStyle=active?"#c58b3b":"#413629";ctx.lineWidth=active?5:2;ctx.strokeRect(x-92,105,184,330);
-      drawPerson(x,220,c,7,false);pixelText(c.name,x,320,active?14:12,active?"#f0d398":"#877863","center");
-      pixelText(c.role,x,350,8,c.accent,"center");
-      pixelText(c.ability,x,394,9,"#c79549","center");
+      const col=i%4,row=Math.floor(i/4),x=135+col*230,y=80+row*190,active=i===selected;
+      ctx.fillStyle=active?"#49301f":"#171511";ctx.fillRect(x-97,y,194,170);
+      ctx.strokeStyle=active?"#c58b3b":"#413629";ctx.lineWidth=active?5:2;ctx.strokeRect(x-97,y,194,170);
+      drawPerson(x,y+62,c,5,false);pixelText(c.name,x,y+117,active?11:10,active?"#f0d398":"#877863","center");
+      pixelText(c.role,x,y+140,7,c.accent,"center");pixelText(c.ability,x,y+160,7,"#c79549","center");
     });
-    pixelText(CHARACTERS[selected].desc.toUpperCase(),480,474,10,"#b8a58a","center");
-    pixelText("◀  SELECT  ▶     SPACE TO BEGIN",480,530,10,"#e1d0af","center");
+    pixelText(CHARACTERS[selected].desc.toUpperCase(),480,490,9,"#b8a58a","center");
+    pixelText("◀ ▶ SELECT · ▲ ▼ ROW · SPACE TO BEGIN",480,540,9,"#e1d0af","center");
   }
   function drawMaze(){
     const layer=LAYERS[game.layer];ctx.fillStyle=layer.dark;ctx.fillRect(0,0,W,H);
@@ -233,17 +272,20 @@
   const held=new Map();
   function press(code){
     if(helpDialog.open||held.has(code))return;held.set(code,true);
-    if(state==="select"&&(code==="ArrowLeft"||code==="KeyA")){selected=(selected+3)%4;tone(160)}
-    else if(state==="select"&&(code==="ArrowRight"||code==="KeyD")){selected=(selected+1)%4;tone(200)}
+    if(state==="select"&&(code==="ArrowLeft"||code==="KeyA")){selected=(selected+CHARACTERS.length-1)%CHARACTERS.length;tone(160)}
+    else if(state==="select"&&(code==="ArrowRight"||code==="KeyD")){selected=(selected+1)%CHARACTERS.length;tone(200)}
+    else if(state==="select"&&(code==="ArrowUp"||code==="KeyW")){selected=(selected+CHARACTERS.length-4)%CHARACTERS.length;tone(180)}
+    else if(state==="select"&&(code==="ArrowDown"||code==="KeyS")){selected=(selected+4)%CHARACTERS.length;tone(220)}
     else if(code==="Space"||code==="Enter")interact();else if(code==="KeyE")awaken();
     else if(code==="ArrowUp"||code==="KeyW")move(0,-1);else if(code==="ArrowDown"||code==="KeyS")move(0,1);else if(code==="ArrowLeft"||code==="KeyA")move(-1,0);else if(code==="ArrowRight"||code==="KeyD")move(1,0);
   }
-  window.addEventListener("keydown",e=>{if(!helpDialog.open&&["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].includes(e.code))e.preventDefault();press(e.code)});
+  window.addEventListener("pointerdown",ensureAudio,{once:true});
+  window.addEventListener("keydown",e=>{ensureAudio();if(!helpDialog.open&&["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].includes(e.code))e.preventDefault();press(e.code)});
   window.addEventListener("keyup",e=>held.delete(e.code));
   document.querySelectorAll("[data-key]").forEach(b=>{
     b.addEventListener("pointerdown",e=>{e.preventDefault();press(b.dataset.key)});b.addEventListener("pointerup",()=>held.delete(b.dataset.key));b.addEventListener("pointercancel",()=>held.delete(b.dataset.key));
   });
-  document.querySelector("#sound").addEventListener("click",e=>{audioOn=!audioOn;e.currentTarget.setAttribute("aria-pressed",audioOn);e.currentTarget.textContent=audioOn?"♪":"×";e.currentTarget.setAttribute("aria-label",audioOn?"Mute sound":"Enable sound");if(audioOn)tone(220)});
+  document.querySelector("#sound").addEventListener("click",e=>{setAudio(!audioOn);e.currentTarget.setAttribute("aria-pressed",audioOn);e.currentTarget.textContent=audioOn?"♪":"×";e.currentTarget.setAttribute("aria-label",audioOn?"Mute music and sound effects":"Enable music and sound effects");e.currentTarget.title=audioOn?"Mute music and sound effects":"Enable music and sound effects";if(audioOn)tone(220)});
   const helpDialog=document.querySelector("#help-dialog"),helpButton=document.querySelector("#help");
   helpButton.addEventListener("click",()=>{held.clear();helpDialog.showModal()});
   document.querySelector("#close-help").addEventListener("click",()=>helpDialog.close());
