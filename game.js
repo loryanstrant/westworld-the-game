@@ -12,14 +12,14 @@
   let game = null, message = "", messageUntil = 0;
 
   const CHARACTERS = [
-    { name:"DOLORES", role:"THE DREAMER", coat:"#dfc48c", hair:"#e4c16f", skin:"#d3a078", accent:"#3b6b86", style:"longHair dress", pants:"#315c72", ability:"REVERIE", power:"reveal", desc:"Reveals memories and the path inward." },
-    { name:"MAEVE", role:"THE AWAKENED", coat:"#211817", hair:"#28170f", skin:"#9b6548", accent:"#2b201d", style:"longHair dress", pants:"#171312", ability:"COMMAND", power:"freeze", desc:"Freezes every host caught in a loop." },
-    { name:"BERNARD", role:"THE SEEKER", coat:"#111314", hair:"#211712", skin:"#704936", accent:"#202326", style:"beard glasses suit", pants:"#121415", ability:"ANALYSE", power:"repair", desc:"Repairs stability by understanding himself." },
-    { name:"TEDDY", role:"THE GUNSLINGER", coat:"#68533e", hair:"#34241b", skin:"#c69570", accent:"#b55a32", pants:"#251b18", ability:"PROTECT", power:"shield", desc:"Becomes immune to one hostile encounter." },
-    { name:"HECTOR", role:"THE OUTLAW", coat:"#2e2925", hair:"#171310", skin:"#a96f4f", accent:"#9b3c2b", style:"stubble", pants:"#251b18", ability:"DEFY", power:"stun", desc:"Stuns nearby hosts and breaks their pursuit." },
-    { name:"CLEMENTINE", role:"THE SURVIVOR", coat:"#2b211d", hair:"#3a2118", skin:"#c69570", accent:"#382923", style:"longHair dress", pants:"#1c1715", ability:"ENDURE", power:"endure", desc:"Fortifies herself against two encounters." },
-    { name:"ARMISTICE", role:"THE REBEL", coat:"#35302c", hair:"#d2ad62", skin:"#c69570", accent:"#8b6544", style:"midHair", pants:"#62452f", ability:"VENOM", power:"venom", desc:"Turns hostile hosts away from the maze." },
-    { name:"LAWRENCE", role:"THE GUIDE", coat:"#594331", hair:"#211b17", skin:"#ad7856", accent:"#a67a3b", pants:"#2d211b", ability:"SHORTCUT", power:"shortcut", desc:"Opens a shortcut to the next reverie." }
+    { name:"DOLORES", role:"THE DREAMER", coat:"#dfc48c", hair:"#e4c16f", skin:"#d3a078", accent:"#3b6b86", style:"longHair dress", pants:"#315c72", ability:"REVERIE", power:"reveal", effect:"PATH TO NEXT GOAL", desc:"Shows a direct path to the next reverie or exit." },
+    { name:"MAEVE", role:"THE AWAKENED", coat:"#211817", hair:"#28170f", skin:"#9b6548", accent:"#2b201d", style:"longHair dress", pants:"#171312", ability:"COMMAND", power:"freeze", effect:"FREEZE ALL HOSTS", desc:"Freezes every hostile host for fourteen turns." },
+    { name:"BERNARD", role:"THE SEEKER", coat:"#111314", hair:"#211712", skin:"#704936", accent:"#202326", style:"beard glasses suit", pants:"#121415", ability:"ANALYSE", power:"repair", effect:"RESTORE 35 STABILITY", desc:"Restores thirty-five points of stability." },
+    { name:"TEDDY", role:"THE GUNSLINGER", coat:"#68533e", hair:"#34241b", skin:"#c69570", accent:"#b55a32", pants:"#251b18", ability:"PROTECT", power:"shield", effect:"BLOCK 1 ENCOUNTER", desc:"Blocks the next hostile encounter." },
+    { name:"HECTOR", role:"THE OUTLAW", coat:"#2e2925", hair:"#171310", skin:"#a96f4f", accent:"#9b3c2b", style:"stubble", pants:"#251b18", ability:"DEFY", power:"stun", effect:"STUN ALL HOSTS", desc:"Stuns every hostile host for eight turns." },
+    { name:"CLEMENTINE", role:"THE SURVIVOR", coat:"#2b211d", hair:"#3a2118", skin:"#c69570", accent:"#382923", style:"longHair dress", pants:"#1c1715", ability:"ENDURE", power:"endure", effect:"BLOCK 2 ENCOUNTERS", desc:"Blocks the next two hostile encounters." },
+    { name:"ARMISTICE", role:"THE REBEL", coat:"#35302c", hair:"#d2ad62", skin:"#c69570", accent:"#8b6544", style:"midHair", pants:"#62452f", ability:"VENOM", power:"venom", effect:"REMOVE 2 HOSTS", desc:"Removes two hostile hosts from the maze." },
+    { name:"LAWRENCE", role:"THE GUIDE", coat:"#594331", hair:"#211b17", skin:"#ad7856", accent:"#a67a3b", pants:"#2d211b", ability:"SHORTCUT", power:"shortcut", effect:"JUMP TO NEXT GOAL", desc:"Jumps directly to the next reverie or exit." }
   ];
   const LAYERS = [
     {name:"THE LOOP", ground:"#243428", wall:"#81522d", dark:"#101b16", story:"You remember a life you were told to forget."},
@@ -283,7 +283,7 @@
     if(game.ability>=100){
       const flash=Math.floor(tick/15)%2===0?"#ffe08a":"#c8903e";
       ctx.fillStyle="rgba(157,63,37,.34)";ctx.fillRect(758,512,194,52);ctx.strokeStyle=flash;ctx.lineWidth=2;ctx.strokeRect(758,512,194,52);
-      pixelText("ABILITY READY!",855,528,8,flash,"center");pixelText("PRESS E / TAP E",855,550,8,"#fff1c7","center");
+      pixelText("ABILITY READY!",855,522,8,flash,"center");pixelText(game.char.effect,855,540,7,"#d9c39a","center");pixelText("PRESS E / TAP E",855,557,7,"#fff1c7","center");
     }else pixelText(`CHARGING ${Math.floor(game.ability)}%`,855,539,8,"#665b4d","center");
   }
   function wrapText(text,max=48){const words=text.split(" "),lines=[""];for(const w of words){if((lines.at(-1)+w).length>max)lines.push("");lines[lines.length-1]+=(lines.at(-1)?" ":"")+w}return lines}
