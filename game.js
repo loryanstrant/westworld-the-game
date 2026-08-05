@@ -66,7 +66,7 @@
     return out.sort(()=>Math.random()-.5);
   }
   function begin() {
-    game={char:CHARACTERS[selected],layer:0,stability:100,consciousness:0,ability:100,score:0,steps:0,shield:false,frozen:0,reveal:0};
+    game={char:CHARACTERS[selected],layer:0,stability:100,consciousness:0,ability:100,score:0,steps:0,shield:false,frozen:0,reveal:0,transitioning:false};
     loadLayer(); state="playing"; chord([165,220,330]);
   }
   function loadLayer() {
@@ -77,13 +77,13 @@
     game.grid=grid; game.player=player; game.exit=centre;
     game.memories=cells.splice(0,3).map((p,i)=>({...p,id:i,found:false}));
     game.enemies=cells.splice(0,3+game.layer).map((p,i)=>({...p,dir:i%4,stunned:0}));
-    game.found=0; game.reveal=0; game.frozen=0;
+    game.found=0; game.reveal=0; game.frozen=0; game.transitioning=false;
     showMessage(LAYERS[game.layer].story,2600);
   }
   function showMessage(text, ms=1800){message=text;messageUntil=performance.now()+ms}
 
   function move(dx,dy) {
-    if(state!=="playing"||performance.now()<messageUntil-2100)return;
+    if(state!=="playing"||game.transitioning||performance.now()<messageUntil-2100)return;
     const p=game.player,nx=p.x+dx,ny=p.y+dy;
     if(game.grid[ny]?.[nx]!==0){tone(70,.05,"square",.02);return}
     p.x=nx;p.y=ny;game.steps++;game.ability=Math.min(100,game.ability+1.4);tone(90+Math.random()*20,.025,"square",.012);
@@ -96,7 +96,7 @@
     if(mem){mem.found=true;game.found++;game.consciousness+=10;game.score+=250;chord([262,330,392]);showMessage(NARRATIVE[game.char.name][game.layer],2200)}
     if(p.x===game.exit.x&&p.y===game.exit.y){
       if(game.found<3){showMessage(`THE CENTRE IS SILENT · ${3-game.found} REVER${3-game.found===1?"Y":"IES"} REMAIN`,1400);tone(80,.2,"sawtooth")}
-      else if(game.layer<2){game.layer++;game.consciousness+=10;game.score+=500;showMessage("DESCENDING INTO THE NEXT LAYER…",1200);setTimeout(()=>{if(state==="playing")loadLayer()},1200)}
+      else if(game.layer<2){game.transitioning=true;game.layer++;game.consciousness+=10;game.score+=500;showMessage("DESCENDING INTO THE NEXT LAYER…",1200);setTimeout(()=>{if(state==="playing")loadLayer()},1200)}
       else {game.consciousness=100;game.score+=1000;state="won";chord([220,277,330,440,554])}
     }
   }
