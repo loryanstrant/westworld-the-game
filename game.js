@@ -138,7 +138,7 @@
   function checkTile() {
     const p=game.player;
     const enemy=game.enemies.find(e=>e.x===p.x&&e.y===p.y);
-    if(enemy)encounter(enemy);
+    if(enemy)encounter(enemy,true);
     if(state!=="playing")return;
     const mem=game.memories.find(m=>!m.found&&m.x===p.x&&m.y===p.y);
     if(mem){mem.found=true;game.found++;game.consciousness+=10;game.score+=250;chord([262,330,392]);showMessage(NARRATIVE[game.char.name][game.layer],2200)}
@@ -159,9 +159,9 @@
       if(e.x===game.player.x&&e.y===game.player.y) encounter(e);
     }
   }
-  function encounter(enemy){
+  function encounter(enemy,pushed=false){
     if(game.shield){game.shield--;enemy.stunned=5;showMessage(game.shield?"YOU ENDURE · ONE REFUSAL REMAINS":"YOU CHOOSE A DIFFERENT ENDING",1100);chord([180,240,360]);return}
-    game.stability-=15;enemy.stunned=4;tone(55,.35,"sawtooth",.05);showMessage("YOU PUSH PAST THE HOST · STABILITY −15",1300);
+    game.stability-=15;enemy.stunned=4;tone(55,.35,"sawtooth",.05);showMessage(`${pushed?"YOU PUSH PAST":"A HOST COLLIDES · YOU HOLD YOUR GROUND"} · STABILITY −15`,1300);
     if(game.stability<=0)state="lost";
   }
   function awaken(){
