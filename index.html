@@ -19,8 +19,27 @@
     <section class="screen-wrap" aria-label="Game screen">
       <canvas id="game" width="960" height="576" tabindex="0" aria-label="The Maze game. Use arrow keys or WASD to move."></canvas>
       <div id="scanlines" aria-hidden="true"></div>
-      <button id="sound" class="sound" type="button" aria-pressed="true" aria-label="Mute sound">♪</button>
+      <div class="screen-buttons">
+        <button id="help" class="screen-button" type="button" aria-label="Show how to play">?</button>
+        <button id="sound" class="screen-button sound" type="button" aria-pressed="true" aria-label="Mute sound">♪</button>
+      </div>
     </section>
+
+    <dialog id="help-dialog" aria-labelledby="help-title">
+      <div class="help-panel">
+        <h2 id="help-title">HOW TO PLAY</h2>
+        <p>Choose a host, then journey through three layers of the maze.</p>
+        <ul>
+          <li><strong>MOVE</strong> with WASD, arrow keys, or the directional pad.</li>
+          <li><strong>COLLECT</strong> all three glowing reveries in each layer.</li>
+          <li><strong>REACH</strong> the maze symbol after collecting all three reveries to descend.</li>
+          <li><strong>AWAKEN</strong> with E when the ability meter is full.</li>
+          <li><strong>AVOID</strong> wandering hosts; contact costs stability.</li>
+        </ul>
+        <p>Recover every memory and reach the centre to gain full consciousness.</p>
+        <button id="close-help" type="button">RETURN TO THE MAZE</button>
+      </div>
+    </dialog>
 
     <section class="controls" aria-label="Controls">
       <div class="control-copy">
