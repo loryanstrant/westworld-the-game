@@ -279,7 +279,8 @@
     else if(code==="Space"||code==="Enter")interact();else if(code==="KeyE")awaken();
     else if(code==="ArrowUp"||code==="KeyW")move(0,-1);else if(code==="ArrowDown"||code==="KeyS")move(0,1);else if(code==="ArrowLeft"||code==="KeyA")move(-1,0);else if(code==="ArrowRight"||code==="KeyD")move(1,0);
   }
-  window.addEventListener("keydown",e=>{if(!helpDialog.open&&["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].includes(e.code))e.preventDefault();press(e.code)});
+  window.addEventListener("pointerdown",ensureAudio,{once:true});
+  window.addEventListener("keydown",e=>{ensureAudio();if(!helpDialog.open&&["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].includes(e.code))e.preventDefault();press(e.code)});
   window.addEventListener("keyup",e=>held.delete(e.code));
   document.querySelectorAll("[data-key]").forEach(b=>{
     b.addEventListener("pointerdown",e=>{e.preventDefault();press(b.dataset.key)});b.addEventListener("pointerup",()=>held.delete(b.dataset.key));b.addEventListener("pointercancel",()=>held.delete(b.dataset.key));
