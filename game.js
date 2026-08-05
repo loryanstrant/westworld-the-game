@@ -238,16 +238,17 @@
     else if(code==="Space"||code==="Enter")interact();else if(code==="KeyE")awaken();
     else if(code==="ArrowUp"||code==="KeyW")move(0,-1);else if(code==="ArrowDown"||code==="KeyS")move(0,1);else if(code==="ArrowLeft"||code==="KeyA")move(-1,0);else if(code==="ArrowRight"||code==="KeyD")move(1,0);
   }
-  window.addEventListener("keydown",e=>{if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].includes(e.code))e.preventDefault();press(e.code)});
+  window.addEventListener("keydown",e=>{if(!helpDialog.open&&["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].includes(e.code))e.preventDefault();press(e.code)});
   window.addEventListener("keyup",e=>held.delete(e.code));
   document.querySelectorAll("[data-key]").forEach(b=>{
     b.addEventListener("pointerdown",e=>{e.preventDefault();press(b.dataset.key)});b.addEventListener("pointerup",()=>held.delete(b.dataset.key));b.addEventListener("pointercancel",()=>held.delete(b.dataset.key));
   });
   document.querySelector("#sound").addEventListener("click",e=>{audioOn=!audioOn;e.currentTarget.setAttribute("aria-pressed",audioOn);e.currentTarget.textContent=audioOn?"♪":"×";e.currentTarget.setAttribute("aria-label",audioOn?"Mute sound":"Enable sound");if(audioOn)tone(220)});
   const helpDialog=document.querySelector("#help-dialog"),helpButton=document.querySelector("#help");
-  helpButton.addEventListener("click",()=>helpDialog.showModal());
-  document.querySelector("#close-help").addEventListener("click",()=>{helpDialog.close();helpButton.focus()});
-  helpDialog.addEventListener("click",e=>{if(e.target===helpDialog){helpDialog.close();helpButton.focus()}});
+  helpButton.addEventListener("click",()=>{held.clear();helpDialog.showModal()});
+  document.querySelector("#close-help").addEventListener("click",()=>helpDialog.close());
+  helpDialog.addEventListener("click",e=>{if(e.target===helpDialog)helpDialog.close()});
+  helpDialog.addEventListener("close",()=>helpButton.focus());
   canvas.addEventListener("click",()=>{canvas.focus();if(state==="title")interact()});
   requestAnimationFrame(loop);
 })();
