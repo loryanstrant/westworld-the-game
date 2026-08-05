@@ -13,7 +13,7 @@
 
   const CHARACTERS = [
     { name:"DOLORES", role:"THE DREAMER", coat:"#dfc48c", hair:"#e4c16f", skin:"#d3a078", accent:"#3b6b86", style:"longHair dress", pants:"#315c72", ability:"REVERIE", power:"reveal", effect:"PATH TO NEXT GOAL", desc:"Shows a direct path to the next reverie or exit." },
-    { name:"MAEVE", role:"THE AWAKENED", coat:"#211817", hair:"#28170f", skin:"#9b6548", accent:"#2b201d", style:"longHair dress", pants:"#171312", ability:"COMMAND", power:"freeze", effect:"FREEZE ALL HOSTS", desc:"Freezes every hostile host for fourteen turns." },
+    { name:"MAEVE", role:"THE AWAKENED", coat:"#211817", hair:"#28170f", skin:"#9b6548", accent:"#2b201d", style:"longHair dress", pants:"#171312", ability:"COMMAND", power:"freeze", effect:"FREEZE HOSTS · 14 HOST TURNS", desc:"Freezes every hostile host for fourteen host turns." },
     { name:"BERNARD", role:"THE SEEKER", coat:"#111314", hair:"#211712", skin:"#704936", accent:"#202326", style:"beard glasses suit", pants:"#121415", ability:"ANALYSE", power:"repair", effect:"RESTORE 35 STABILITY", desc:"Restores thirty-five points of stability." },
     { name:"TEDDY", role:"THE GUNSLINGER", coat:"#68533e", hair:"#34241b", skin:"#c69570", accent:"#b55a32", pants:"#251b18", ability:"PROTECT", power:"shield", effect:"BLOCK 1 ENCOUNTER", desc:"Blocks the next hostile encounter." },
     { name:"HECTOR", role:"THE OUTLAW", coat:"#2e2925", hair:"#171310", skin:"#a96f4f", accent:"#9b3c2b", style:"stubble", pants:"#251b18", ability:"DEFY", power:"stun", effect:"STUN ALL HOSTS", desc:"Stuns every hostile host for eight turns." },
