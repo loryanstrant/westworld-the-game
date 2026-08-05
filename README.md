@@ -18,7 +18,7 @@ Then visit <http://localhost:8080>.
 
 - **WASD / arrow keys:** move
 - **Space:** interact with memories and doors
-- **E:** use the selected character's awakening ability
+- **E:** use the selected character's awakening ability once its meter reaches 100%
 - Touch controls appear on touch devices
 
 ## Goal

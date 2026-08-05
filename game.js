@@ -12,12 +12,12 @@
   let game = null, message = "", messageUntil = 0;
 
   const CHARACTERS = [
-    { name:"DOLORES", role:"THE DREAMER", coat:"#dfc48c", hair:"#e4c16f", skin:"#d3a078", accent:"#3b6b86", style:"longHair", pants:"#315c72", ability:"REVERIE", power:"reveal", desc:"Reveals memories and the path inward." },
-    { name:"MAEVE", role:"THE AWAKENED", coat:"#721f21", hair:"#28170f", skin:"#9b6548", accent:"#c69242", style:"longHair", pants:"#34201b", ability:"COMMAND", power:"freeze", desc:"Freezes every host caught in a loop." },
+    { name:"DOLORES", role:"THE DREAMER", coat:"#dfc48c", hair:"#e4c16f", skin:"#d3a078", accent:"#3b6b86", style:"longHair dress", pants:"#315c72", ability:"REVERIE", power:"reveal", desc:"Reveals memories and the path inward." },
+    { name:"MAEVE", role:"THE AWAKENED", coat:"#721f21", hair:"#28170f", skin:"#9b6548", accent:"#c69242", style:"longHair dress", pants:"#34201b", ability:"COMMAND", power:"freeze", desc:"Freezes every host caught in a loop." },
     { name:"BERNARD", role:"THE SEEKER", coat:"#493c32", hair:"#211712", skin:"#704936", accent:"#9eb3a7", style:"beard glasses", pants:"#282522", ability:"ANALYSE", power:"repair", desc:"Repairs stability by understanding himself." },
     { name:"TEDDY", role:"THE GUNSLINGER", coat:"#68533e", hair:"#34241b", skin:"#c69570", accent:"#b55a32", pants:"#251b18", ability:"PROTECT", power:"shield", desc:"Becomes immune to one hostile encounter." },
     { name:"HECTOR", role:"THE OUTLAW", coat:"#2e2925", hair:"#171310", skin:"#a96f4f", accent:"#9b3c2b", style:"stubble", pants:"#251b18", ability:"DEFY", power:"stun", desc:"Stuns nearby hosts and breaks their pursuit." },
-    { name:"CLEMENTINE", role:"THE SURVIVOR", coat:"#784c3e", hair:"#3a2118", skin:"#c69570", accent:"#d0a76d", style:"longHair", pants:"#3a2720", ability:"ENDURE", power:"endure", desc:"Fortifies herself against two encounters." },
+    { name:"CLEMENTINE", role:"THE SURVIVOR", coat:"#784c3e", hair:"#3a2118", skin:"#c69570", accent:"#d0a76d", style:"longHair dress", pants:"#3a2720", ability:"ENDURE", power:"endure", desc:"Fortifies herself against two encounters." },
     { name:"ARMISTICE", role:"THE REBEL", coat:"#35302c", hair:"#d2ad62", skin:"#c69570", accent:"#8b6544", style:"midHair", pants:"#62452f", ability:"VENOM", power:"venom", desc:"Turns hostile hosts away from the maze." },
     { name:"LAWRENCE", role:"THE GUIDE", coat:"#594331", hair:"#211b17", skin:"#ad7856", accent:"#a67a3b", pants:"#2d211b", ability:"SHORTCUT", power:"shortcut", desc:"Opens a shortcut to the next reverie." }
   ];
@@ -61,20 +61,21 @@
   }
   function playMusicStep() {
     if (!audioOn || !audio || audio.state!=="running" || !musicGain) return;
-    // An original clockwork-western cue: minor arpeggios, a sparse lead and a mechanical pulse.
-    const roots=[110,110,98,98,82.41,82.41,98,92.5];
-    const arpeggio=[1,1.5,2,1.2,1,1.5,1.8,1.2];
-    const lead=[0,0,329.63,0,293.66,261.63,0,220,0,246.94,0,293.66,261.63,0,196,0];
-    const now=audio.currentTime,beat=musicStep%16,root=roots[Math.floor(beat/2)];
-    const pluck=(freq,type,volume,length)=>{
-      const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.value=freq;
-      g.gain.setValueAtTime(volume,now);g.gain.exponentialRampToValueAtTime(.001,now+length);
-      o.connect(g).connect(musicGain);o.start(now);o.stop(now+length+.01);
+    // Original player-piano-inspired cue: clockwork triplets, western minor harmony and bell-like answers.
+    const roots=[110,110,110,98,98,98,82.41,82.41,82.41,92.5,92.5,92.5];
+    const pianoPattern=[1,1.5,2.4,1.2,1.8,2.4,1,1.5,2,1.2,1.5,2.4];
+    const bell=[329.63,0,0,293.66,0,0,246.94,0,220,0,0,196,261.63,0,0,220,0,0,185,0,164.81,0,0,0];
+    const now=audio.currentTime,step=musicStep%24,root=roots[step%12];
+    const pluck=(freq,type,volume,length,delay=0)=>{
+      const start=now+delay,o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.value=freq;
+      g.gain.setValueAtTime(volume,start);g.gain.exponentialRampToValueAtTime(.001,start+length);
+      o.connect(g).connect(musicGain);o.start(start);o.stop(start+length+.01);
     };
-    pluck(root*arpeggio[beat%8],"square",.12,.14);
-    if(lead[beat]) pluck(lead[beat],"square",.1,.24);
-    if(beat%4===0) pluck(root/2,"triangle",.3,.55);
-    if(beat%2===0) pluck(55,"square",.035,.025);
+    pluck(root*pianoPattern[step%12],"square",.11,.12);
+    pluck(root*pianoPattern[(step+4)%12]*2,"triangle",.045,.09,.055);
+    if(bell[step]) pluck(bell[step],"square",.085,.32);
+    if(step%6===0) pluck(root/2,"triangle",.28,.62);
+    if(step%3===0) pluck(48,"square",.025,.018);
     musicStep++;
   }
   function setAudio(enabled) {
@@ -108,7 +109,7 @@
     return out.sort(()=>Math.random()-.5);
   }
   function begin() {
-    game={char:CHARACTERS[selected],layer:0,stability:100,consciousness:0,ability:100,score:0,steps:0,shield:false,frozen:0,reveal:0,transitioning:false};
+    game={char:CHARACTERS[selected],layer:0,stability:100,consciousness:0,ability:100,abilityReadyAnnounced:true,score:0,steps:0,shield:false,frozen:0,reveal:0,transitioning:false};
     loadLayer(); state="playing"; chord([165,220,330]);
   }
   function loadLayer() {
@@ -128,7 +129,9 @@
     if(state!=="playing"||game.transitioning||performance.now()<messageUntil-2100)return;
     const p=game.player,nx=p.x+dx,ny=p.y+dy;
     if(game.grid[ny]?.[nx]!==0){tone(70,.05,"square",.02);return}
-    p.x=nx;p.y=ny;game.steps++;game.ability=Math.min(100,game.ability+1.4);tone(90+Math.random()*20,.025,"square",.012);
+    p.x=nx;p.y=ny;game.steps++;game.ability=Math.min(100,game.ability+1.4);
+    if(game.ability>=100&&!game.abilityReadyAnnounced){game.abilityReadyAnnounced=true;showMessage(`${game.char.ability} READY · PRESS E OR THE E BUTTON`,1800);chord([220,330,440])}
+    tone(90+Math.random()*20,.025,"square",.012);
     checkTile();
     if(game.steps%2===0)moveEnemies();
   }
@@ -160,7 +163,7 @@
   }
   function awaken(){
     if(state!=="playing"||game.ability<100){if(state==="playing")showMessage(`ABILITY CHARGING · ${Math.floor(game.ability)}%`,900);return}
-    game.ability=0;game.score+=100;
+    game.ability=0;game.abilityReadyAnnounced=false;game.score+=100;
     switch(game.char.power){
       case "reveal":game.reveal=500;showMessage("REVERIE · THE PATH REMEMBERS",1400);break;
       case "freeze":game.frozen=14;showMessage("COMMAND · LOOPS SUSPENDED",1400);break;
@@ -212,7 +215,13 @@
     if(style.includes("beard")){ctx.fillStyle=c.hair;ctx.fillRect(-3,-3,1,2);ctx.fillRect(2,-3,1,2);ctx.fillRect(-2,-2,4,1)}
     else if(style.includes("stubble")){ctx.fillStyle="#5b382b";ctx.fillRect(-2,-2,4,1);ctx.fillRect(2,-3,1,1)}
     ctx.fillStyle=c.accent;ctx.fillRect(-4,-1,8,7);ctx.fillStyle=c.coat;ctx.fillRect(-5,1,2,7);ctx.fillRect(3,1,2,7);
-    ctx.fillStyle=c.pants||"#251b18";ctx.fillRect(-4,6,3,6);ctx.fillRect(1,6,3,6);ctx.restore();
+    if(style.includes("dress")){
+      ctx.fillStyle=c.accent;ctx.fillRect(-5,5,10,3);ctx.fillRect(-6,8,12,4);
+      ctx.fillStyle=c.pants||"#251b18";ctx.fillRect(-4,12,2,1);ctx.fillRect(2,12,2,1);
+    }else{
+      ctx.fillStyle=c.pants||"#251b18";ctx.fillRect(-4,6,3,6);ctx.fillRect(1,6,3,6);
+    }
+    ctx.restore();
   }
   function drawSelect(){
     backdrop();pixelText("CHOOSE WHO WAKES",480,42,19,"#d9c39a","center");
@@ -266,7 +275,11 @@
     pixelText(game.char.ability,x,320,8,"#9b886c");meter(x,334,game.ability,"#557f78");
     pixelText("REVERIES",x,380,8,"#9b886c");pixelText(`${"◆".repeat(game.found)}${"◇".repeat(3-game.found)}`,x,407,18,"#d7ad54");
     pixelText("SCORE",x,458,8,"#806f58");pixelText(String(game.score).padStart(6,"0"),x,483,14,"#d9c29a");
-    pixelText("E TO AWAKEN",855,539,8,game.ability>=100?"#e9c363":"#665b4d","center");
+    if(game.ability>=100){
+      const flash=Math.floor(tick/15)%2===0?"#ffe08a":"#c8903e";
+      ctx.fillStyle="rgba(157,63,37,.34)";ctx.fillRect(758,512,194,52);ctx.strokeStyle=flash;ctx.lineWidth=2;ctx.strokeRect(758,512,194,52);
+      pixelText("ABILITY READY!",855,528,8,flash,"center");pixelText("PRESS E / TAP E",855,550,8,"#fff1c7","center");
+    }else pixelText(`CHARGING ${Math.floor(game.ability)}%`,855,539,8,"#665b4d","center");
   }
   function wrapText(text,max=48){const words=text.split(" "),lines=[""];for(const w of words){if((lines.at(-1)+w).length>max)lines.push("");lines[lines.length-1]+=(lines.at(-1)?" ":"")+w}return lines}
   function drawMessage(){
