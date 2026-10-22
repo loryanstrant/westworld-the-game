@@ -1,0 +1,273 @@
+{
+  "schema_version": "1.0",
+  "repository": "westworld-the-game",
+  "identity": {
+    "description": "A small, dependency-free browser game inspired by the themes and characters of *Westworld* season one. Traverse a procedural maze, recover reveries, evade hosts caught in their loops, and awaken enough consciousness to reach the centre.",
+    "default_branch": "main",
+    "languages": {
+      "JavaScript": 1
+    },
+    "topics": [],
+    "licence": "MIT License",
+    "file_count": 6
+  },
+  "start_here": {
+    "readme": "README.md",
+    "agents_md": "AGENTS.md",
+    "entry_points": [],
+    "decision_records": [],
+    "build_config": [],
+    "source_roots": [
+      "."
+    ]
+  },
+  "documentation": [
+    {
+      "path": "README.md",
+      "title": "The Maze — An 8-bit Awakening",
+      "lines": 33,
+      "headings": [
+        {
+          "level": 2,
+          "text": "Play",
+          "anchor": "play"
+        },
+        {
+          "level": 2,
+          "text": "Controls",
+          "anchor": "controls"
+        },
+        {
+          "level": 2,
+          "text": "Goal",
+          "anchor": "goal"
+        },
+        {
+          "level": 2,
+          "text": "Technical notes",
+          "anchor": "technical-notes"
+        }
+      ]
+    }
+  ],
+  "code": {
+    "source_roots": [
+      "."
+    ],
+    "symbol_source": "repomix (tree-sitter signatures)",
+    "routes": [],
+    "files": [
+      {
+        "path": "game.js",
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "ensureAudio",
+            "parent": "",
+            "signature": "function ensureAudio()"
+          },
+          {
+            "kind": "function",
+            "name": "tone",
+            "parent": "",
+            "signature": "function tone(freq=220, length=.08, type=\"square\", volume=.035)"
+          },
+          {
+            "kind": "function",
+            "name": "playMusicStep",
+            "parent": "",
+            "signature": "function playMusicStep()"
+          },
+          {
+            "kind": "const",
+            "name": "pluck",
+            "parent": "",
+            "signature": "const pluck=(freq,type,volume,length,delay=0)=>"
+          },
+          {
+            "kind": "function",
+            "name": "setAudio",
+            "parent": "",
+            "signature": "function setAudio(enabled)"
+          },
+          {
+            "kind": "function",
+            "name": "chord",
+            "parent": "",
+            "signature": "function chord(notes)"
+          },
+          {
+            "kind": "function",
+            "name": "makeMaze",
+            "parent": "",
+            "signature": "function makeMaze()"
+          },
+          {
+            "kind": "function",
+            "name": "floorCells",
+            "parent": "",
+            "signature": "function floorCells(grid, exclude=[])"
+          },
+          {
+            "kind": "function",
+            "name": "begin",
+            "parent": "",
+            "signature": "function begin()"
+          },
+          {
+            "kind": "function",
+            "name": "loadLayer",
+            "parent": "",
+            "signature": "function loadLayer()"
+          },
+          {
+            "kind": "function",
+            "name": "showMessage",
+            "parent": "",
+            "signature": "function showMessage(text, ms=1800)"
+          },
+          {
+            "kind": "function",
+            "name": "move",
+            "parent": "",
+            "signature": "function move(dx,dy)"
+          },
+          {
+            "kind": "function",
+            "name": "checkTile",
+            "parent": "",
+            "signature": "function checkTile()"
+          },
+          {
+            "kind": "function",
+            "name": "moveEnemies",
+            "parent": "",
+            "signature": "function moveEnemies()"
+          },
+          {
+            "kind": "function",
+            "name": "encounter",
+            "parent": "",
+            "signature": "function encounter(enemy,pushed=false)"
+          },
+          {
+            "kind": "function",
+            "name": "awaken",
+            "parent": "",
+            "signature": "function awaken()"
+          },
+          {
+            "kind": "function",
+            "name": "interact",
+            "parent": "",
+            "signature": "function interact()"
+          },
+          {
+            "kind": "function",
+            "name": "pixelText",
+            "parent": "",
+            "signature": "function pixelText(text,x,y,size=16,color=\"#eee1c4\",align=\"left\")"
+          },
+          {
+            "kind": "function",
+            "name": "backdrop",
+            "parent": "",
+            "signature": "function backdrop()"
+          },
+          {
+            "kind": "function",
+            "name": "drawTitle",
+            "parent": "",
+            "signature": "function drawTitle()"
+          },
+          {
+            "kind": "function",
+            "name": "drawPerson",
+            "parent": "",
+            "signature": "function drawPerson(x,y,c,scale=4,walking=false)"
+          },
+          {
+            "kind": "function",
+            "name": "drawSelect",
+            "parent": "",
+            "signature": "function drawSelect()"
+          },
+          {
+            "kind": "function",
+            "name": "drawMaze",
+            "parent": "",
+            "signature": "function drawMaze()"
+          },
+          {
+            "kind": "function",
+            "name": "drawPath",
+            "parent": "",
+            "signature": "function drawPath()"
+          },
+          {
+            "kind": "function",
+            "name": "meter",
+            "parent": "",
+            "signature": "function meter(x,y,value,color)"
+          },
+          {
+            "kind": "function",
+            "name": "drawHud",
+            "parent": "",
+            "signature": "function drawHud()"
+          },
+          {
+            "kind": "function",
+            "name": "wrapText",
+            "parent": "",
+            "signature": "function wrapText(text,max=48)"
+          },
+          {
+            "kind": "function",
+            "name": "drawMessage",
+            "parent": "",
+            "signature": "function drawMessage()"
+          },
+          {
+            "kind": "function",
+            "name": "drawEnd",
+            "parent": "",
+            "signature": "function drawEnd(won)"
+          },
+          {
+            "kind": "function",
+            "name": "render",
+            "parent": "",
+            "signature": "function render()"
+          },
+          {
+            "kind": "function",
+            "name": "loop",
+            "parent": "",
+            "signature": "function loop(now)"
+          },
+          {
+            "kind": "function",
+            "name": "press",
+            "parent": "",
+            "signature": "function press(code)"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [],
+  "operations": [],
+  "limitations": {
+    "unparsed_languages": [],
+    "excluded_dirs": [],
+    "code_map_truncated": false,
+    "code_map_symbols_capped": true,
+    "tracked_files_only": true
+  },
+  "generated": {
+    "source_commit": "a5f2caca866a7306e42c3dc42f48790369a2577e",
+    "content_hash": "248b63fc74d5bcf6",
+    "generator": "navgen"
+  }
+}
